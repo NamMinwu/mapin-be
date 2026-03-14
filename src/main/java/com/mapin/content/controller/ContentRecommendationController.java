@@ -1,6 +1,6 @@
 package com.mapin.content.controller;
 
-import com.mapin.content.application.ContentRecommendationService;
+import com.mapin.content.application.ContentRecommendationOrchestrator;
 import com.mapin.content.dto.ContentRecommendationResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ContentRecommendationController {
 
-    private final ContentRecommendationService contentRecommendationService;
+    private final ContentRecommendationOrchestrator contentRecommendationOrchestrator;
 
     @GetMapping("/{contentId}/recommendations")
     public ResponseEntity<List<ContentRecommendationResponse>> recommend(
             @PathVariable Long contentId,
             @RequestParam(defaultValue = "3") int topK
     ) {
-        return ResponseEntity.ok(contentRecommendationService.recommend(contentId, topK));
+        return ResponseEntity.ok(contentRecommendationOrchestrator.recommend(contentId, topK));
     }
 }

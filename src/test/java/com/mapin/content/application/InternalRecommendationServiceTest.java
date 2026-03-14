@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ContentRecommendationServiceTest {
+class InternalRecommendationServiceTest {
 
     @Mock
     private ContentRepository contentRepository;
@@ -37,7 +37,7 @@ class ContentRecommendationServiceTest {
     private CandidateValidationService candidateValidationService;
 
     @InjectMocks
-    private ContentRecommendationService contentRecommendationService;
+    private InternalRecommendationService internalRecommendationService;
 
     private Content source;
     private Content candidate;
@@ -99,7 +99,7 @@ class ContentRecommendationServiceTest {
         );
         when(candidateValidationService.validate(source, candidate, 0.85)).thenReturn(validated);
 
-        List<ContentRecommendationResponse> responses = contentRecommendationService.recommend(1L, 3);
+        List<ContentRecommendationResponse> responses = internalRecommendationService.recommend(source, 3);
 
         assertThat(responses).hasSize(1);
         ContentRecommendationResponse response = responses.get(0);
