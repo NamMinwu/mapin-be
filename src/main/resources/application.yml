@@ -4,25 +4,39 @@ spring:
   application:
     name: mapin_BE
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:mapin;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE}
-    username: ${SPRING_DATASOURCE_USERNAME:sa}
-    password: ${SPRING_DATASOURCE_PASSWORD:}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/myapp}
+    username: ${SPRING_DATASOURCE_USERNAME:myuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:mypassword}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.postgresql.Driver}
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
   sql:
     init:
       mode: never
 
 openai:
   api-key: ${OPENAI_API_KEY:}
-  model: ${OPENAI_MODEL:gpt-5.2}
+  model: ${OPENAI_MODEL:gpt-4.1}
+  embedding-model: ${OPENAI_EMBEDDING_MODEL:text-embedding-3-small}
 
 youtube:
   api:
     key: ${YOUTUBE_API_KEY:}
+
+qdrant:
+  host: ${QDRANT_HOST:localhost}
+  port: ${QDRANT_PORT:6333}
+  collection-name: ${QDRANT_COLLECTION_NAME:mapin_contents}
+  vector-size: ${QDRANT_VECTOR_SIZE:1536}
+  distance: ${QDRANT_DISTANCE:Cosine}
+
+logging:
+  level:
+    com.mapin.content.application.FallbackCandidateExpansionService: DEBUG
+    com.mapin.content.application.SearchQueryGenerationService: DEBUG
+    com.mapin.content.infrastructure.YoutubeSearchApiClient: DEBUG

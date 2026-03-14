@@ -3,9 +3,11 @@ package com.mapin.content.application;
 import com.mapin.content.domain.Content;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class SearchQueryGenerationService {
 
     public List<String> generate(Content source) {
@@ -18,11 +20,16 @@ public class SearchQueryGenerationService {
         queries.add(base + " 전문가 해설");
         queries.add(base + " 시민 반응");
 
-        return queries.stream().distinct().toList();
+        List<String> distinctQueries = queries.stream().distinct().toList();
+        if (distinctQueries.isEmpty()) {
+            log.warn("SearchQueryGenerationService generated no queries for contentId={} title='{}'", source.getId(), source.getTitle());
+        }
+        return distinctQueries;
     }
 
     private String normalizeBaseQuery(String title) {
         if (title == null || title.isBlank()) {
+            log.warn("Source title is blank while generating search query");
             return "";
         }
         return title.trim();

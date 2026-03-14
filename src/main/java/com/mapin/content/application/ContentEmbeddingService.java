@@ -5,8 +5,10 @@ import com.mapin.content.dto.ContentEmbeddingResponse;
 import com.mapin.content.domain.ContentRepository;
 import com.mapin.content.port.EmbeddingClient;
 import com.mapin.content.port.VectorStoreClient;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,7 @@ public class ContentEmbeddingService {
 
         String embeddingText = buildEmbeddingText(content);
         List<Float> vector = embeddingClient.embed(embeddingText);
-        String vectorId = "content:" + content.getId();
+        String vectorId = buildVectorId(content);
         String embeddingModel = embeddingClient.modelName();
 
         vectorStoreClient.upsert(
@@ -35,8 +37,7 @@ public class ContentEmbeddingService {
                 Map.of(
                         "contentId", content.getId(),
                         "platform", content.getPlatform(),
-                        "status", content.getStatus(),
-                        "externalContentId", content.getExternalContentId()
+                        "status", content.getStatus()
                 )
         );
 
@@ -54,5 +55,10 @@ public class ContentEmbeddingService {
         String title = content.getTitle() == null ? "" : content.getTitle();
         String description = content.getDescription() == null ? "" : content.getDescription();
         return title + "\n" + description;
+    }
+
+    private String buildVectorId(Content content) {
+        String seed = "content:" + content.getId();
+        return UUID.nameUUIDFromBytes(seed.getBytes(StandardCharsets.UTF_8)).toString();
     }
 }

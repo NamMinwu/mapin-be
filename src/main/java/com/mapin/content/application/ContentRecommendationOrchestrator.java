@@ -5,11 +5,13 @@ import com.mapin.content.domain.ContentRepository;
 import com.mapin.content.dto.ContentRecommendationResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class ContentRecommendationOrchestrator {
 
@@ -30,7 +32,11 @@ public class ContentRecommendationOrchestrator {
             return initialResults;
         }
 
+        log.info("Fallback candidate expansion triggered for contentId={} (vectorId={}), initialResults={}, topK={}",
+                sourceContentId, source.getVectorId(), initialResults.size(), topK);
         fallbackCandidateExpansionService.expand(source);
-        return internalRecommendationService.recommend(source, topK);
+        List<ContentRecommendationResponse> fallbackResults = internalRecommendationService.recommend(source, topK);
+        log.info("Fallback recommendations collected for contentId={} -> {} results", sourceContentId, fallbackResults.size());
+        return fallbackResults;
     }
 }
