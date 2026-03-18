@@ -36,7 +36,11 @@ public class ContentRecommendationOrchestrator {
                 sourceContentId, source.getVectorId(), initialResults.size(), topK);
         fallbackCandidateExpansionService.expand(source);
         List<ContentRecommendationResponse> fallbackResults = internalRecommendationService.recommend(source, topK);
-        log.info("Fallback recommendations collected for contentId={} -> {} results", sourceContentId, fallbackResults.size());
+        List<String> fallbackUrls = fallbackResults.stream()
+                .map(ContentRecommendationResponse::canonicalUrl)
+                .toList();
+        log.info("Fallback recommendations collected for contentId={} -> {} results, urls={}",
+                sourceContentId, fallbackResults.size(), fallbackUrls);
         return fallbackResults;
     }
 }

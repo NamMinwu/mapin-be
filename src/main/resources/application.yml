@@ -23,6 +23,7 @@ openai:
   api-key: ${OPENAI_API_KEY:}
   model: ${OPENAI_MODEL:gpt-4.1}
   embedding-model: ${OPENAI_EMBEDDING_MODEL:text-embedding-3-small}
+  search-query-model: ${OPENAI_SEARCH_QUERY_MODEL:gpt-4.1-mini}
 
 youtube:
   api:

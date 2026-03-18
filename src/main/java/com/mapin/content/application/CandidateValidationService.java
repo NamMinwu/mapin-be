@@ -18,11 +18,16 @@ public class CandidateValidationService {
 
         double qualityScore = calculateQualityScore(candidate);
 
-        boolean qualified = topicSimilarity >= 0.75 && distance >= 1;
-
         double finalScore = 0.6 * topicSimilarity
                 + 0.25 * perspectiveScore
                 + 0.15 * qualityScore;
+
+        // Relax qualification by allowing slightly lower similarity when other scores compensate.
+        boolean qualified =
+//            (topicSimilarity >= 0.7 && distance >= 1)
+//                || (topicSimilarity >= 0.65 && perspectiveScore >= 0.7)
+//                ||
+        (finalScore >= 0.65);
 
         return new RecommendationCandidate(
                 candidate,
