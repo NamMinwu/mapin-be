@@ -83,6 +83,18 @@ public class Content {
   @Column(name = "category", length = 50)
   private String category;
 
+  @Column(name = "frame", length = 50)
+  private String frame;
+
+  @Column(name = "scope", length = 30)
+  private String scope;
+
+  @Column(name = "tone", length = 30)
+  private String tone;
+
+  @Column(name = "format", length = 30)
+  private String format;
+
   @Column(name = "perspective_level", length = 30)
   private String perspectiveLevel;
 
@@ -136,8 +148,20 @@ public class Content {
     this.vectorId = vectorId;
   }
 
-  public void updatePerspective(String category, String perspectiveLevel, String perspectiveStakeholder) {
+  public void updatePerspective(
+      String category,
+      String frame,
+      String scope,
+      String tone,
+      String format,
+      String perspectiveLevel,
+      String perspectiveStakeholder
+  ) {
     this.category = category;
+    this.frame = frame;
+    this.scope = scope;
+    this.tone = tone;
+    this.format = format;
     this.perspectiveLevel = perspectiveLevel;
     this.perspectiveStakeholder = perspectiveStakeholder;
   }

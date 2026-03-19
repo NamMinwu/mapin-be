@@ -11,6 +11,7 @@ import com.mapin.content.domain.Content;
 import com.mapin.content.domain.ContentRepository;
 import com.mapin.content.dto.ContentRecommendationResponse;
 import com.mapin.content.dto.RecommendationCandidate;
+import com.mapin.content.dto.SelectedRecommendation;
 import com.mapin.content.port.VectorSearchResult;
 import com.mapin.content.port.VectorStoreClient;
 import java.time.OffsetDateTime;
@@ -36,6 +37,9 @@ class InternalRecommendationServiceTest {
     @Mock
     private CandidateValidationService candidateValidationService;
 
+    @Mock
+    private FinalRecommendationSelector finalRecommendationSelector;
+
     @InjectMocks
     private InternalRecommendationService internalRecommendationService;
 
@@ -59,7 +63,7 @@ class InternalRecommendationServiceTest {
                 .status("ACTIVE")
                 .build();
         source.updateEmbeddingInfo("source text", "model", "content:1");
-        source.updatePerspective("경제", "사건", "정부");
+        source.updatePerspective("경제", "시장동향", "국가", "해설", "뉴스", "사건", "정부");
 
         candidate = Content.builder()
                 .canonicalUrl("https://youtube.com/watch?v=candidate")
@@ -76,13 +80,13 @@ class InternalRecommendationServiceTest {
                 .status("ACTIVE")
                 .build();
         candidate.updateEmbeddingInfo("candidate text", "model", "content:2");
-        candidate.updatePerspective("경제", "원인", "전문가");
+        candidate.updatePerspective("경제", "기업전략", "조직/산업", "비판", "인터뷰", "원인", "전문가");
     }
 
     @Test
     void recommend_returnsQualifiedCandidatesSortedByFinalScore() {
         when(contentRepository.findById(anyLong())).thenReturn(Optional.of(source));
-        when(vectorStoreClient.searchById("content:1", 8)).thenReturn(List.of(
+        when(vectorStoreClient.searchById("content:1", 15)).thenReturn(List.of(
                 new VectorSearchResult("content:1", 1.0, Map.of()),
                 new VectorSearchResult("content:2", 0.85, Map.of())
         ));
@@ -91,13 +95,20 @@ class InternalRecommendationServiceTest {
         RecommendationCandidate validated = new RecommendationCandidate(
                 candidate,
                 0.85,
-                2,
                 1.0,
                 0.8,
-                0.91,
+                0.7,
+                0.6,
+                0.9,
+                0.8,
+                0.88,
+                2,
                 true
         );
         when(candidateValidationService.validate(source, candidate, 0.85)).thenReturn(validated);
+
+        SelectedRecommendation selection = new SelectedRecommendation(validated, 0.75, 0.82);
+        when(finalRecommendationSelector.select(List.of(validated), 3)).thenReturn(List.of(selection));
 
         List<ContentRecommendationResponse> responses = internalRecommendationService.recommend(source, 3);
 
@@ -106,12 +117,16 @@ class InternalRecommendationServiceTest {
         assertThat(response.contentId()).isEqualTo(candidate.getId());
         assertThat(response.topicSimilarity()).isEqualTo(0.85);
         assertThat(response.perspectiveDistance()).isEqualTo(2);
-        assertThat(response.finalScore()).isEqualTo(0.91);
+        assertThat(response.candidateScore()).isEqualTo(0.88);
+        assertThat(response.diversityScore()).isEqualTo(0.75);
+        assertThat(response.selectionScore()).isEqualTo(0.82);
         assertThat(response.perspectiveLevel()).isEqualTo("원인");
         assertThat(response.perspectiveStakeholder()).isEqualTo("전문가");
+        assertThat(response.frame()).isEqualTo("기업전략");
+        assertThat(response.scope()).isEqualTo("조직/산업");
 
         verify(contentRepository, times(1)).findById(1L);
-        verify(vectorStoreClient, times(1)).searchById("content:1", 8);
+        verify(vectorStoreClient, times(1)).searchById("content:1", 15);
         verify(candidateValidationService, times(1)).validate(source, candidate, 0.85);
     }
 }

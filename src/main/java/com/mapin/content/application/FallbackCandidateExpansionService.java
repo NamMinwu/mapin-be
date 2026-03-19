@@ -60,12 +60,26 @@ public class FallbackCandidateExpansionService {
                 contentEmbeddingService.embed(contentId);
             }
 
-            if (candidate.getPerspectiveLevel() == null || candidate.getPerspectiveStakeholder() == null) {
+            if (needsPerspectiveAnalysis(candidate)) {
                 log.info("Analyzing perspectives for fallback candidate contentId={} videoId={}", contentId, videoId);
                 contentPerspectiveAnalysisService.analyze(contentId);
             }
         }
         log.info("Fallback expansion finished for source contentId={} (processed {} candidates)",
                 source.getId(), candidateVideoIds.size());
+    }
+
+    private boolean needsPerspectiveAnalysis(Content candidate) {
+        return isBlank(candidate.getCategory())
+                || isBlank(candidate.getFrame())
+                || isBlank(candidate.getScope())
+                || isBlank(candidate.getTone())
+                || isBlank(candidate.getFormat())
+                || isBlank(candidate.getPerspectiveLevel())
+                || isBlank(candidate.getPerspectiveStakeholder());
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

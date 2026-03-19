@@ -69,6 +69,10 @@ class ContentPerspectiveAnalysisControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.category").value("경제"))
+                .andExpect(jsonPath("$.frame").value("시장동향"))
+                .andExpect(jsonPath("$.scope").value("국가"))
+                .andExpect(jsonPath("$.tone").value("해설"))
+                .andExpect(jsonPath("$.format").value("뉴스"))
                 .andExpect(jsonPath("$.perspectiveLevel").value("사건"))
                 .andExpect(jsonPath("$.perspectiveStakeholder").value("정부"))
                 .andReturn();
@@ -81,6 +85,10 @@ class ContentPerspectiveAnalysisControllerTest {
 
         Content updated = contentRepository.findById(content.getId()).orElseThrow();
         assertThat(updated.getCategory()).isEqualTo("경제");
+        assertThat(updated.getFrame()).isEqualTo("시장동향");
+        assertThat(updated.getScope()).isEqualTo("국가");
+        assertThat(updated.getTone()).isEqualTo("해설");
+        assertThat(updated.getFormat()).isEqualTo("뉴스");
         assertThat(updated.getPerspectiveLevel()).isEqualTo("사건");
         assertThat(updated.getPerspectiveStakeholder()).isEqualTo("정부");
     }

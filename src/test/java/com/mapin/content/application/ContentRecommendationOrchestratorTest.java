@@ -52,15 +52,32 @@ class ContentRecommendationOrchestratorTest {
                 .status("ACTIVE")
                 .build();
         source.updateEmbeddingInfo("source text", "model", "content:1");
-        source.updatePerspective("경제", "사건", "정부");
+        source.updatePerspective("경제", "시장동향", "국가", "해설", "뉴스", "사건", "정부");
     }
 
     @Test
     void recommend_triggersFallbackWhenInitialResultsInsufficient() {
         when(contentRepository.findById(1L)).thenReturn(Optional.of(source));
         List<ContentRecommendationResponse> fallbackResults = List.of(
-                new ContentRecommendationResponse(2L, "url", "title", "thumb", "channel",
-                        OffsetDateTime.parse("2024-01-02T00:00:00Z"), "경제", "원인", "전문가", 0.8, 2, 0.9)
+                new ContentRecommendationResponse(
+                        2L,
+                        "url",
+                        "title",
+                        "thumb",
+                        "channel",
+                        OffsetDateTime.parse("2024-01-02T00:00:00Z"),
+                        "경제",
+                        "기업전략",
+                        "조직/산업",
+                        "비판",
+                        "인터뷰",
+                        "원인",
+                        "전문가",
+                        0.8,
+                        2,
+                        0.85,
+                        0.9,
+                        0.87)
         );
 
         when(internalRecommendationService.recommend(source, 3))

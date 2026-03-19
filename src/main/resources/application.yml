@@ -38,6 +38,8 @@ qdrant:
 
 logging:
   level:
+    root: INFO
     com.mapin.content.application.FallbackCandidateExpansionService: DEBUG
     com.mapin.content.application.SearchQueryGenerationService: DEBUG
+    com.mapin.content.application.CandidateValidationService: DEBUG
     com.mapin.content.infrastructure.YoutubeSearchApiClient: DEBUG

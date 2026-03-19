@@ -10,10 +10,16 @@ public record ContentRecommendationResponse(
         String channelTitle,
         OffsetDateTime publishedAt,
         String category,
+        String frame,
+        String scope,
+        String tone,
+        String format,
         String perspectiveLevel,
         String perspectiveStakeholder,
         double topicSimilarity,
         int perspectiveDistance,
-        double finalScore
+        double candidateScore,
+        double diversityScore,
+        double selectionScore
 ) {
 }

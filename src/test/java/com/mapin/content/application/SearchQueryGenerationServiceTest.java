@@ -44,7 +44,7 @@ class SearchQueryGenerationServiceTest {
                 .viewCount(1000L)
                 .status("ACTIVE")
                 .build();
-        source.updatePerspective("경제", "정부정책", "정부");
+        source.updatePerspective("경제", "시장동향", "국가", "해설", "뉴스", "사건", "정부");
     }
 
     @Test
@@ -55,19 +55,27 @@ class SearchQueryGenerationServiceTest {
                 anyString(),
                 anyString(),
                 anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
                 eq(5)))
                 .thenReturn(List.of("경제 위기 심층 분석", "국제 금리 변동", "물가 체감 시민 의견"));
 
         List<String> queries = searchQueryGenerationService.generate(source);
 
         assertThat(queries)
-                .contains("경제 위기", "경제 위기 원인 분석", "경제 위기 전문가 해설")
+                .contains("경제 위기", "경제 위기 산업구조", "경제 위기 인터뷰")
                 .containsSequence("경제 위기", "경제 위기 심층 분석", "국제 금리 변동");
     }
 
     @Test
     void generate_whenAiSuggestionsEmpty_usesFallbackQueries() {
         when(searchQuerySuggestionClient.suggestKeywords(
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
                 anyString(),
                 anyString(),
                 anyString(),
@@ -81,10 +89,10 @@ class SearchQueryGenerationServiceTest {
         assertThat(queries)
                 .containsExactly(
                         "경제 위기",
-                        "경제 위기 원인 분석",
-                        "경제 위기 구조 문제",
-                        "경제 위기 전문가 해설",
-                        "경제 위기 시민 반응"
+                        "경제 위기 산업구조",
+                        "경제 위기 기업전략",
+                        "경제 위기 인터뷰",
+                        "경제 위기 국제 반응"
                 );
     }
 
@@ -104,10 +112,14 @@ class SearchQueryGenerationServiceTest {
                 .viewCount(500L)
                 .status("ACTIVE")
                 .build();
-        untitled.updatePerspective("에너지", "안전", "시민단체");
+        untitled.updatePerspective("IT/과학", "규제", "국가", "경고", "해설", "원인", "시민");
 
         when(searchQuerySuggestionClient.suggestKeywords(
                 eq(""),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString(),
                 anyString(),
                 anyString(),
                 anyString(),

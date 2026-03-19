@@ -5,10 +5,14 @@ import com.mapin.content.domain.Content;
 public record RecommendationCandidate(
         Content content,
         double topicSimilarity,
-        int perspectiveDistance,
-        double perspectiveScore,
+        double frameDifferenceScore,
+        double scopeDifferenceScore,
+        double toneDifferenceScore,
+        double formatDifferenceScore,
+        double perspectiveSupportScore,
         double qualityScore,
-        double finalScore,
+        double candidateScore,
+        int perspectiveDistance,
         boolean qualified
 ) {
 }

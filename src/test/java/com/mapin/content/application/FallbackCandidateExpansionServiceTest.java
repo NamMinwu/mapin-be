@@ -66,7 +66,7 @@ class FallbackCandidateExpansionServiceTest {
                 .status("ACTIVE")
                 .build();
         source.updateEmbeddingInfo("source text", "model", "content:1");
-        source.updatePerspective("경제", "사건", "정부");
+        source.updatePerspective("경제", "시장동향", "국가", "해설", "뉴스", "사건", "정부");
 
         candidate = Content.builder()
                 .canonicalUrl("https://youtube.com/watch?v=candidate")

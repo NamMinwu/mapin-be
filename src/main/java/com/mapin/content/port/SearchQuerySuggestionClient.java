@@ -8,6 +8,10 @@ public interface SearchQuerySuggestionClient {
             String title,
             String description,
             String category,
+            String frame,
+            String scope,
+            String tone,
+            String format,
             String perspectiveLevel,
             String perspectiveStakeholder,
             int limit

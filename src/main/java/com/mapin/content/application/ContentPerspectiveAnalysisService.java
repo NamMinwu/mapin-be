@@ -26,6 +26,10 @@ public class ContentPerspectiveAnalysisService {
 
         content.updatePerspective(
                 result.category(),
+                result.frame(),
+                result.scope(),
+                result.tone(),
+                result.format(),
                 result.perspectiveLevel(),
                 result.perspectiveStakeholder()
         );
@@ -33,6 +37,10 @@ public class ContentPerspectiveAnalysisService {
         return new ContentPerspectiveResponse(
                 content.getId(),
                 result.category(),
+                result.frame(),
+                result.scope(),
+                result.tone(),
+                result.format(),
                 result.perspectiveLevel(),
                 result.perspectiveStakeholder()
         );

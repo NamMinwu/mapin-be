@@ -21,7 +21,7 @@ public class ContentRecommendationController {
     @GetMapping("/{contentId}/recommendations")
     public ResponseEntity<List<ContentRecommendationResponse>> recommend(
             @PathVariable Long contentId,
-            @RequestParam(defaultValue = "3") int topK
+            @RequestParam(defaultValue = "2") int topK
     ) {
         return ResponseEntity.ok(contentRecommendationOrchestrator.recommend(contentId, topK));
     }

@@ -13,6 +13,10 @@ public class MockPerspectiveClassifier implements PerspectiveClassifier {
     public PerspectiveAnalysisResult classify(String text) {
         return new PerspectiveAnalysisResult(
                 "경제",
+                "시장동향",
+                "국가",
+                "해설",
+                "뉴스",
                 "사건",
                 "정부"
         );

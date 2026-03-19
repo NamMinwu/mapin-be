@@ -35,6 +35,10 @@ public class GptSearchQuerySuggestionClient implements SearchQuerySuggestionClie
             String title,
             String description,
             String category,
+            String frame,
+            String scope,
+            String tone,
+            String format,
             String perspectiveLevel,
             String perspectiveStakeholder,
             int limit
@@ -48,7 +52,17 @@ public class GptSearchQuerySuggestionClient implements SearchQuerySuggestionClie
                     .<SearchQuerySchema>builder()
                     .model(toChatModel(model))
                     .addSystemMessage(systemPrompt())
-                    .addUserMessage(userPrompt(title, description, category, perspectiveLevel, perspectiveStakeholder, limit))
+                    .addUserMessage(userPrompt(
+                            title,
+                            description,
+                            category,
+                            frame,
+                            scope,
+                            tone,
+                            format,
+                            perspectiveLevel,
+                            perspectiveStakeholder,
+                            limit))
                     .responseFormat(SearchQuerySchema.class, JsonSchemaLocalValidation.YES)
                     .build();
 
@@ -78,6 +92,7 @@ public class GptSearchQuerySuggestionClient implements SearchQuerySuggestionClie
                 주어진 영상 제목과 설명을 읽고, 다양한 관점에서 검색 결과를 얻을 수 있는 한국어 키워드만 반환한다.
                 제시된 스키마를 반드시 따르고 불필요한 문장은 제거한다.
                 키워드는 5~25자 범위에서 작성하고 구체적인 명사를 포함하며, 서로 겹치지 않도록 한다.
+                동일 카테고리를 유지하되, frame/scope/tone/format이 바뀌도록 검색 의도를 확장한다.
                 """;
     }
 
@@ -85,6 +100,10 @@ public class GptSearchQuerySuggestionClient implements SearchQuerySuggestionClie
             String title,
             String description,
             String category,
+            String frame,
+            String scope,
+            String tone,
+            String format,
             String perspectiveLevel,
             String perspectiveStakeholder,
             int limit
@@ -92,6 +111,10 @@ public class GptSearchQuerySuggestionClient implements SearchQuerySuggestionClie
         String safeTitle = title == null ? "" : title.strip();
         String safeDescription = truncate(description == null ? "" : description.strip(), DESCRIPTION_MAX_LENGTH);
         String safeCategory = category == null || category.isBlank() ? "미정" : category.strip();
+        String safeFrame = frame == null || frame.isBlank() ? "미정" : frame.strip();
+        String safeScope = scope == null || scope.isBlank() ? "미정" : scope.strip();
+        String safeTone = tone == null || tone.isBlank() ? "미정" : tone.strip();
+        String safeFormat = format == null || format.isBlank() ? "미정" : format.strip();
         String safePerspectiveLevel = perspectiveLevel == null || perspectiveLevel.isBlank() ? "미정" : perspectiveLevel.strip();
         String safePerspectiveStakeholder = perspectiveStakeholder == null || perspectiveStakeholder.isBlank() ? "미정" : perspectiveStakeholder.strip();
 
@@ -99,16 +122,21 @@ public class GptSearchQuerySuggestionClient implements SearchQuerySuggestionClie
                 다음 영상을 유튜브에서 검색할 때 사용할 수 있는 서로 다른 키워드 %d개를 추천해줘.
                 - 키워드는 짧고 명확해야 한다.
                 - 해시태그나 번호는 붙이지 않는다.
-                - 카테고리는 유지하되, 관점·이해당사자는 현재 정보와 다르게 설정한다.
+                - 카테고리는 유지한다.
+                - frame/scope/tone/format을 다양화하되 scope는 지나치게 멀어지지 않는다.
                 - 동일한 단어를 반복하지 말고, 현재 관점과 반대되거나 보완적인 탐색 의도를 만들어라.
                 - JSON 스키마에 맞는 데이터만 생성한다.
 
                 제목: %s
                 설명: %s
                 카테고리(변경 금지): %s
+                현재 frame: %s
+                현재 scope: %s
+                현재 tone: %s
+                현재 format: %s
                 관점 레벨: %s
                 관점 이해당사자: %s
-                """.formatted(limit, safeTitle, safeDescription, safeCategory, safePerspectiveLevel, safePerspectiveStakeholder);
+                """.formatted(limit, safeTitle, safeDescription, safeCategory, safeFrame, safeScope, safeTone, safeFormat, safePerspectiveLevel, safePerspectiveStakeholder);
     }
 
     private ChatModel toChatModel(String modelName) {
